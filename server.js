@@ -14,10 +14,10 @@ function checkIfDivisible(results,passedText){
 
 
   for(var al=0;al<results[0].text.length;al++){
-    //exploding text to chars
+    //splitting text to chars
     textCharsArray.push((results[0].text).charAt(al).toLowerCase());
     }
-    //looping through exploded array for maching first char of passed text with any maching char inside whole text as 
+    //looping through textCharsArray for matching first char of passed text with any matching char inside whole text as 
     //long as the range after start of char in whole text is equal to passedtext length if it is not we move 
     //to next matching char in whole text
     for(var tu=0;tu<textCharsArray.length;tu++){
