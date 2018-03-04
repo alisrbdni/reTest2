@@ -114,7 +114,7 @@ function checkIfDivisible(results,passedText){
               resArr.push({'subtext': element,'result':'<No Output>'});
             }
           });
-          console.log('response object'+JSON.stringify(resArr));
+          console.log('results array : '+JSON.stringify(resArr));
           request(options).then(function (resArr){
            
             myObj = { "candidate":"Ali Sarabadani", "text":results[0].text, "results":resArr };
