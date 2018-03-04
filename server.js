@@ -34,7 +34,7 @@ function checkIfDivisible(results,passedText){
     for (var i=tu;i<tu+lengthOfSubText;i++){
       //here we build a newStr starting at matched char eg:p up to the length of our passed text
       //eg.peter pickl piper
-      newStr1 +=  obj.text.charAt(i).toLowerCase();
+      newStr1 +=  results[0].text.charAt(i).toLowerCase();
       var targetSecond = passedText.toLowerCase();
          if (newStr1==targetSecond)
             {
@@ -89,7 +89,7 @@ function checkIfDivisible(results,passedText){
             // JSON body
             if(err) { console.log(err); callback(true); return; }
             obj = JSON.parse(body);
-           t2=obj;
+          //  t2=obj;
             callback(false, obj);
           });
         },
@@ -116,10 +116,11 @@ function checkIfDivisible(results,passedText){
           });
           
           request(options).then(function (resArr){
-            console.log(resArr);
+           
             myObj = { "candidate":"Ali Sarabadani", "text":results[0].text, "results":resArr };
           
             console.log(myObj);
+            console.log('results'+resArr);
              res.status(200).myObj;
             
         })
