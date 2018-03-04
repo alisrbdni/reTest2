@@ -9,7 +9,7 @@ var resStr='',resArr=[], newStr='',newStr1='',textCharsArray=[], strIndex='';
 
 
 
-function checkIfDivisible(results,passedText){
+function seacrhFunc(results,passedText){
   
 
 
@@ -27,9 +27,7 @@ function checkIfDivisible(results,passedText){
       //equal to length of our passed text
       if(textCharsArray[tu] == passedText.charAt(0).toLowerCase())
       {
-    // console.log(tu+'char is:'+textCharsArray[tu])
     
-    // var startChar = results[1].subTexts[zx].charAt(0);
     var lengthOfSubText = passedText.length;
     for (var i=tu;i<tu+lengthOfSubText;i++){
       //here we build a newStr starting at matched char eg:p up to the length of our passed text
@@ -47,10 +45,10 @@ function checkIfDivisible(results,passedText){
      
        newStr1='';
        
+                }
+            }
          }
        }
-      }
-    }
     }
 
  app.post('/', (req, res) => {
@@ -68,7 +66,7 @@ function checkIfDivisible(results,passedText){
 //and store in results arr
       async.parallel([
         /*
-         * range API
+         * textToSearch API
          */
         function(callback) {
           var url = "https://join.reckon.com/test2/textToSearch";
@@ -76,12 +74,12 @@ function checkIfDivisible(results,passedText){
             // JSON body
             if(err) { console.log(err); callback(true); return; }
             obj = JSON.parse(body);
-            // t1=obj;
+           
             callback(false, obj);
           });
         },
         /*
-         * divisor API
+         * subTexts API
          */
         function(callback) {
           var url = "https://join.reckon.com/test2/subTexts";
@@ -95,7 +93,7 @@ function checkIfDivisible(results,passedText){
         },
       ],
       /*
-       * calling checkIfDivisible as logic and sending resStr as response 
+       * calling seacrhFunc as logic
        */
       function(err, results) {
         if(err) { console.log(err); res.send(500,"Server Error"); return; }
@@ -103,7 +101,7 @@ function checkIfDivisible(results,passedText){
         
           results[1].subTexts.forEach(function(element) {
             console.log(element);
-            checkIfDivisible(results,element.toLowerCase());
+            seacrhFunc(results,element.toLowerCase());
             
             if(strIndex)
             {
