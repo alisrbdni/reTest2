@@ -97,7 +97,6 @@ function seacrhFunc(results,passedText){
               return
             }
             obj = JSON.parse(body);
-          //  t2=obj;
             callback(false, obj);
           });
         },
