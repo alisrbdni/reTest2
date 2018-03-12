@@ -13,9 +13,9 @@ function seacrhFunc(results,passedText){
   
 
 
-  for(var al=0;al<results[0].text.length;al++){
+  for(var al=0;al<results.one.text.length;al++){
     //splitting text to chars
-    textCharsArray.push((results[0].text).charAt(al).toLowerCase());
+    textCharsArray.push((results.one.text).charAt(al).toLowerCase());
     }
     //looping through textCharsArray for matching first char of passed text with any matching char inside whole text as 
     //long as the range after start of char in whole text is equal to passedtext length if it is not we move 
@@ -32,7 +32,7 @@ function seacrhFunc(results,passedText){
     for (var i=tu;i<tu+lengthOfSubText;i++){
       //here we build a newStr starting at matched char eg:p up to the length of our passed text
       //eg.peter pickl piper
-      newStr1 +=  results[0].text.charAt(i).toLowerCase();
+      newStr1 +=  results.one.text.charAt(i).toLowerCase();
       var targetSecond = passedText.toLowerCase();
          if (newStr1==targetSecond)
             {
@@ -62,17 +62,22 @@ function seacrhFunc(results,passedText){
         
     }
 }
-//using async parallel to run both funcs with callbacks 
-//and store in results arr
-      async.parallel([
+//defining both funcs with callbacks as parallelFunctions
+
+     var parallelFunctions ={
         /*
          * textToSearch API
          */
-        function(callback) {
+        one:function(callback) {
           var url = "https://join.reckon.com/test2/textToSearch";
           request(url, function(err, response, body) {
             // JSON body
             if(err) { console.log(err); callback(true); return; }
+            //in addition to async.retry if response status is not 200 retry again
+            else if(response.statusCode !=200){
+              retry();
+              return
+            }
             obj = JSON.parse(body);
            
             callback(false, obj);
@@ -81,25 +86,40 @@ function seacrhFunc(results,passedText){
         /*
          * subTexts API
          */
-        function(callback) {
+       two: function(callback) {
           var url = "https://join.reckon.com/test2/subTexts";
           request(url, function(err, response, body) {
             // JSON body
             if(err) { console.log(err); callback(true); return; }
+            //in addition to async.retry if response status is not 200 retry again
+            else if(response.statusCode !=200){
+              retry();
+              return
+            }
             obj = JSON.parse(body);
           //  t2=obj;
             callback(false, obj);
           });
         },
-      ],
+      }
+
+      //calling both api s in parallel using async parallel
+      var doThemInParallel = function(callback) {
+        async.parallel(parallelFunctions, function(err, results) {
+            callback(err, results);
+        });
+    };
       /*
-       * calling seacrhFunc as logic
+       * using async.retry 
+       * Attempts to get a successful response from task no more than times times with interval before returning an error. 
        */
-      function(err, results) {
-        if(err) { console.log(err); res.send(500,"Server Error"); return; }
-         
+      async.retry({
+        times: 1000,
+        interval: 1000
+      }, doThemInParallel, function(err, results) {
         
-          results[1].subTexts.forEach(function(element) {
+          // do something with the result
+          results.two.subTexts.forEach(function(element) {
             console.log(element);
             seacrhFunc(results,element.toLowerCase());
             
@@ -115,7 +135,7 @@ function seacrhFunc(results,passedText){
           console.log('results array : '+JSON.stringify(resArr));
           request(options).then(function (resArr){
            
-            finalObj = { "candidate":"Ali Sarabadani", "text":results[0].text, "results":resArr };
+            finalObj = { "candidate":"Ali Sarabadani", "text":results.one.text, "results":resArr };
           
             console.log(finalObj);
              res.status(200).json(finalObj);
@@ -124,8 +144,23 @@ function seacrhFunc(results,passedText){
         .catch(function (err) {
             console.log(err);
         })
-      }
-      );
- })
+     });
+   
+      });
+
+
+      
+      // async.retry({times:10, interval: 20000}, doThemInParallel, function(err, results) {
+      //   if(err) { 
+      //     console.log('retried apis for'+times+'and interval of :'+interval+'calls to provided apis unsuccessful');
+      //     console.log(err); res.send(500,"Server Error"); return; 
+        
+      //   }
+        
+       
+       
+    
+     
+//  })
 
 app.listen(9999, () => console.log('Reckon test2 app listening on port 9999'));
