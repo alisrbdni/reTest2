@@ -149,18 +149,4 @@ function seacrhFunc(results,passedText){
       });
 
 
-      
-      // async.retry({times:10, interval: 20000}, doThemInParallel, function(err, results) {
-      //   if(err) { 
-      //     console.log('retried apis for'+times+'and interval of :'+interval+'calls to provided apis unsuccessful');
-      //     console.log(err); res.send(500,"Server Error"); return; 
-        
-      //   }
-        
-       
-       
-    
-     
-//  })
-
 app.listen(9999, () => console.log('Reckon test2 app listening on port 9999'));
