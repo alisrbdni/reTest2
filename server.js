@@ -73,11 +73,6 @@ function seacrhFunc(results,passedText){
           request(url, function(err, response, body) {
             // JSON body
             if(err) { console.log(err); callback(true); return; }
-            //in addition to async.retry if response status is not 200 retry again
-            else if(response.statusCode !=200){
-              retry();
-              return
-            }
             obj = JSON.parse(body);
            
             callback(false, obj);
